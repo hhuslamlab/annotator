@@ -1,15 +1,29 @@
 #!/usr/bin/env bash
+
 set -o errexit
 
-app="/src/backend"
+root="$(dirname "$0")/.."
+app="${root}/app"
+venv="${root}/venv"
+
+if [[ ! -f "${venv}/bin/python" ]]; then
+  echo "Creating virtualenv"
+  mkdir -p "${venv}"
+  python3 -m venv "${venv}"
+  "${venv}/bin/pip" install --upgrade pip setuptools
+fi
+
+echo "Installing dependencies"
+apt-get update && apt-get install -y g++ unixodbc-dev # pyodbc build dependencies
+"${venv}/bin/pip" install -r "${root}/requirements.txt"
 
 echo "Initializing database"
-python "${app}/manage.py" wait_for_db
-python "${app}/manage.py" migrate
-python "${app}/manage.py" create_roles
+"${venv}/bin/python" "${app}/manage.py" wait_for_db
+"${venv}/bin/python" "${app}/manage.py" migrate
+"${venv}/bin/python" "${app}/manage.py" create_roles
 
 if [[ -n "${ADMIN_USERNAME}" ]] && [[ -n "${ADMIN_PASSWORD}" ]] && [[ -n "${ADMIN_EMAIL}" ]]; then
-  python "${app}/manage.py" create_admin \
+  "${venv}/bin/python" "${app}/manage.py" create_admin \
     --username "${ADMIN_USERNAME}" \
     --password "${ADMIN_PASSWORD}" \
     --email "${ADMIN_EMAIL}" \
@@ -18,4 +32,4 @@ if [[ -n "${ADMIN_USERNAME}" ]] && [[ -n "${ADMIN_PASSWORD}" ]] && [[ -n "${ADMI
 fi
 
 echo "Starting django"
-python -u "${app}/manage.py" runserver 0.0.0.0:8000
+"${venv}/bin/python" -u "${app}/manage.py" runserver "$@"

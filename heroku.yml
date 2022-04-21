@@ -1,5 +1,5 @@
 build:
   docker:
-    web: docker/Dockerfile.heroku
+    web: Dockerfile
 run:
   web: /doccano/tools/run.sh
