@@ -214,6 +214,7 @@ and the exported file will look like this:
 ```JSON
 {"doc_id": 2023, "text": "EU rejects German call to boycott British lamb.", "labels": ["news"], "username": "root", "meta": {"external_id": 1}}
 ```
-## Contact
 
-For help and feedback, please feel free to contact [Akhilesh](mailto:kakolura@hhu.de)
+### LICENSE
+
+[MIT LICENSE](https://github.com/hhuslamlab/annotator)
